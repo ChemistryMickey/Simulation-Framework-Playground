@@ -2,29 +2,18 @@
 #include <vector>
 #include <cinttypes>
 #include <Eigen/Dense>
+#include <unordered_map>
 
 #include "model.hpp"
 #include "integrator.hpp"
+#include "SimManager.hpp"
 #include "constants.hpp"
 #include "ChargedParticle.hpp"
-
-enum class SimPhases{
-	Environment,
-	Sensor,
-	SensorDelay,
-	Controls,
-	Actuators,
-	Integration,
-	Logging
-};
-
-
-struct SimulationManager{};
 
 int main(){
 	// Simulation plumbing
 	Integrator<DATATABLE_COLS> integrator{};
-	double dt = 1e-6; // [s] This should be derived from job frequency
+	SimulationManager simManager{0.05};
 
 	// Setup models
 	// Environment
@@ -42,10 +31,23 @@ int main(){
 	electron.otherParticles.emplace_back(proton);
 	proton.otherParticles.emplace_back(electron);
 
-	// Run simulation
-	for(size_t frame = 0; frame < 10; ++frame)
-	{
-		std::cout << "Frame " << frame << ": \n" << integrator.dataTable << std::endl;
-		integrator.integrate(dt);
-	}
+	// Register things with the Simulation Manager
+	simManager.register_jobs(
+		{
+			{
+				.func = [&integrator](){std::cout << integrator.dataTable << std::endl;}, 
+				.frequency = 17,
+				.phase = SimPhase::Integration
+			},
+			{
+				.func = [&integrator, &simManager](){integrator.integrate(1.0/10.0);}, 
+				.frequency = 10,
+				.phase = SimPhase::Integration
+			}
+		}
+	);
+
+	// Punch it
+	simManager.run();
 }
+
