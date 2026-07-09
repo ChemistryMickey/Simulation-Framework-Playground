@@ -1,9 +1,19 @@
 # Define compilation flags/toolchain
+BUILD := Release
 CXX := g++
 WFLAGS := -Werror -Wall -Wextra -Wpedantic -Wreorder -Wunused-result
-INC := -I include -isystem /usr/include/eigen3
+INC := -I include -isystem /usr/include/eigen3 -lfmt
 
-CXXFLAGS += $(WFLAGS) -std=c++20 $(INC) -MMD -MP
+cxxflags.common := $(WFLAGS) -std=c++20 $(INC) -MMD -MP
+cxxflags.Debug := -fsanitize=address,undefined -g -fPIC -fno-omit-frame-pointer
+cxxflags.Release := -O3 -DNDEBUG
+CXXFLAGS := ${cxxflags.${BUILD}} ${cxxflags.common}
+
+ldflags.common := 
+ldflags.Debug := -fsanitize=address,undefined
+ldflags.Release := -flto
+LDFLAGS := ${ldflags.${BUILD}} ${ldflags.common}
+
 
 # Define directories
 SRC_DIR := src
@@ -54,7 +64,7 @@ test: $(TEST_TARGET)
 	$(TEST_TARGET)
 
 $(TEST_TARGET): $(TEST_OBJS) $(OBJS) | $(BUILD_DIR)	
-	$(CXX) $^ -lgtest -lgtest_main -o $@
+	$(CXX) $^ -lgtest -lgtest_main ${CXXFLAGS} -o $@
 
 -include $(DEPS)
 

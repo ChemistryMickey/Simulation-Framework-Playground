@@ -34,8 +34,9 @@ TEST_F(TestSimManager, OneActiveJob){
 }
 
 TEST_F(TestSimManager, ActivateJob){
+	simManager.stopTime_s = 2;
 	simManager.register_job(delayedJob);
 	EXPECT_EQ(simManager.active_phases.size(), 0);
 	simManager.run();
-	EXPECT_EQ(simManager.active_phases[SimPhase::Environment][0].procCounter, 2);
+	EXPECT_EQ(simManager.active_phases[delayedJob.phase][0].procCounter, 4);
 }

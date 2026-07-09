@@ -50,8 +50,8 @@ struct SimulationManager{
 
 	SimulationManager(double stopTime_s_ = 0.): stopTime_s{stopTime_s_} {}
 
-        void register_job(const Job& j);
-	void register_jobs(const std::vector<Job>& js);
+        void register_job(Job& j);
+	void register_jobs(std::vector<Job>& js);
         void run();
 	void recalculate_sim_time_step();
 	void activate_deactivate_jobs(double);
