@@ -5,7 +5,7 @@
 
 enum class SimPhase : uint8_t{
         Environment,
-        Sensor,
+        Sensors,
         SensorDelay,
         Controls,
         Actuators,

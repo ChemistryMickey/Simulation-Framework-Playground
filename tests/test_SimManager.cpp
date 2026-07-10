@@ -16,6 +16,21 @@ struct TestSimManager : ::testing::Test{
 		.phase = SimPhase::Environment,
 		.activation_time_ns = 500'000'000
 	};
+
+	Job timeoutJob{
+		.func = [](){}, // Do nothing
+		.frequency = 3,
+		.phase = SimPhase::Sensors,
+		.deactivation_time_ns = 500'000'000
+	};
+
+	Job activateDeactivateJob{
+		.func = [](){}, // Do nothing
+		.frequency = 3,
+		.phase = SimPhase::Sensors,
+		.activation_time_ns = 500'000'000,
+		.deactivation_time_ns = 1'500'000'000
+	};
 };
 
 TEST_F(TestSimManager, EmptyQueue){	
@@ -39,4 +54,20 @@ TEST_F(TestSimManager, ActivateJob){
 	EXPECT_EQ(simManager.active_phases.size(), 0);
 	simManager.run();
 	EXPECT_EQ(simManager.active_phases[delayedJob.phase][0].procCounter, 4);
+}
+
+TEST_F(TestSimManager, DeactivateJob){
+	simManager.stopTime_s = 2;
+	simManager.register_job(timeoutJob);
+	EXPECT_EQ(simManager.active_phases.size(), 1);
+	simManager.run();
+	EXPECT_EQ(simManager.deactivated_phases[timeoutJob.phase][0].procCounter, 2);
+}
+
+TEST_F(TestSimManager, ActivateDeactivateJob){
+	simManager.stopTime_s = 2;
+	simManager.register_job(activateDeactivateJob);
+	EXPECT_EQ(simManager.active_phases.size(), 0);
+	simManager.run();
+	EXPECT_EQ(simManager.deactivated_phases[activateDeactivateJob.phase][0].procCounter, 2);
 }

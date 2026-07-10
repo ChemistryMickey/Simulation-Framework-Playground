@@ -12,7 +12,11 @@ enum class LogLevel {
     Trace
 };
 
+#ifdef VERBOSE
 constexpr LogLevel CompileTimeLogLevel = LogLevel::Trace;
+#else
+constexpr LogLevel CompileTimeLogLevel = LogLevel::Debug;
+#endif
 
 template<LogLevel Level, typename... Args>
 constexpr void log(fmt::format_string<Args...> fmtStr, Args&&... args)

@@ -32,20 +32,19 @@ int main(){
 	proton.otherParticles.emplace_back(electron);
 
 	// Register things with the Simulation Manager
-	simManager.register_jobs(
+	std::vector<Job> jobs{
 		{
-			{
-				.func = [&integrator](){std::cout << integrator.dataTable << std::endl;}, 
-				.frequency = 17,
-				.phase = SimPhase::Integration
-			},
-			{
-				.func = [&integrator, &simManager](){integrator.integrate(1.0/10.0);}, 
-				.frequency = 10,
-				.phase = SimPhase::Integration
-			}
+			.func = [&integrator](){std::cout << integrator.dataTable << std::endl;}, 
+			.frequency = 17,
+			.phase = SimPhase::Integration
+		},
+		{
+			.func = [&integrator, &simManager](){integrator.integrate(1.0/10.0);}, 
+			.frequency = 10,
+			.phase = SimPhase::Integration
 		}
-	);
+	};
+	simManager.register_jobs(jobs);
 
 	// Punch it
 	simManager.run();

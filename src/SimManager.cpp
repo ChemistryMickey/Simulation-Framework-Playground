@@ -41,9 +41,33 @@ void SimulationManager::activate_deactivate_jobs(double curSimTime_s){
 	for(uint8_t phase = 0; phase < static_cast<uint8_t>(SimPhase::END); ++phase){
 		auto& activeJobs = active_phases[static_cast<SimPhase>(phase)];
 		auto& deactivatedJobs = deactivated_phases[static_cast<SimPhase>(phase)];
+		std::string phaseName = std::string(magic_enum::enum_name(static_cast<SimPhase>(phase)));
 
-		log<LogLevel::Trace>("{} ({}): Checking to activate jobs", magic_enum::enum_name(static_cast<SimPhase>(phase)), curSimTime_s);
-		log<LogLevel::Debug>("Num active jobs: {}, Num deactivated jobs: {}", activeJobs.size(), deactivatedJobs.size());
+		log<LogLevel::Trace>("{} ({}): Checking to activate jobs", phaseName, curSimTime_s);
+		log<LogLevel::Trace>("{}: Num active jobs: {}, Num deactivated jobs: {}", phaseName, activeJobs.size(), deactivatedJobs.size());
+		
+		// Check to deactivate (intentionally before activate)
+		for(size_t i = 0; i < activeJobs.size(); ++i){
+			auto& job = activeJobs.at(i);
+			if(job.deactivation_time_ns == 0) continue;
+
+			if(curSimTime_s * 1e9 > job.deactivation_time_ns){
+				log<LogLevel::Debug>("Deactivating job at {}", (void*) &job);
+
+				job.isActive = false;
+				job.isDeactivated = true;
+				deactivatedJobs.emplace_back(std::move(job));
+			}
+		}
+
+		// Clean up now defunct deactivated jobs
+		for(ssize_t i = deactivatedJobs.size() - 1; i > -1; --i){
+			if(deactivatedJobs[i].isActive){
+				deactivatedJobs.erase(deactivatedJobs.begin() + i);
+				recalculate_sim_time_step();
+			}
+		}
+		log<LogLevel::Trace>("Got through deactivation");
 
 		// Check to activate
 		for(size_t i = 0; i < deactivatedJobs.size(); ++i){
@@ -59,29 +83,6 @@ void SimulationManager::activate_deactivate_jobs(double curSimTime_s){
 				activeJobs.emplace_back(std::move(job));
 			}
 		}
-
-		// Clean up now defunct deactivated jobs
-		for(ssize_t i = deactivatedJobs.size() - 1; i > -1; --i){
-			if(deactivatedJobs[i].isActive){
-				deactivatedJobs.erase(deactivatedJobs.begin() + i);
-				recalculate_sim_time_step();
-			}
-		}
-		log<LogLevel::Trace>("Got through activation");
-
-		// Check to deactivate
-		for(size_t i = 0; i < activeJobs.size(); ++i){
-			auto& job = activeJobs.at(i);
-			if(job.deactivation_time_ns == 0) continue;
-
-			if(curSimTime_s * 1e9 > job.deactivation_time_ns){
-				log<LogLevel::Debug>("Deactivating job at {}", (void*) &job);
-
-				job.isActive = false;
-				deactivatedJobs.emplace_back(std::move(job));
-			}
-		}
-
 		// Cleanup now defunct active jobs	
 		for(ssize_t i = activeJobs.size() - 1; i > -1; --i){
 			if(!activeJobs[i].isActive){
@@ -89,7 +90,7 @@ void SimulationManager::activate_deactivate_jobs(double curSimTime_s){
 				recalculate_sim_time_step();
 			}
 		}
-		log<LogLevel::Trace>("Got through deactivation");
+		log<LogLevel::Trace>("Got through activation");
 	}
 }
 
@@ -110,6 +111,6 @@ void SimulationManager::run(){
 
 		// Tick time
 		curSimTime_s += dt_s;
-		log<LogLevel::Trace>("Incremented time to {}", curSimTime_s);
+		log<LogLevel::Debug>("Incremented time to {}", curSimTime_s);
 	}
 }
