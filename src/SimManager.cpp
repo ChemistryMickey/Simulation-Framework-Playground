@@ -92,7 +92,6 @@ bool SimulationManager::activate_deactivate_jobs(double curSimTime_s){
 		for(ssize_t i = activeJobs.size() - 1; i > -1; --i){
 			if(!activeJobs[i].isActive){
 				activeJobs.erase(activeJobs.begin() + i);
-				recalculate_sim_time_step();
 			}
 		}
 		log<LogLevel::Trace>("Got through activation");
@@ -107,13 +106,14 @@ void SimulationManager::run(){
 	double curSimTime_s = 0;
 	while(curSimTime_s < stopTime_s)
 	{
+		// Time and Job activation updates
 		bool jobsChanged = activate_deactivate_jobs(curSimTime_s);
 		if(jobsChanged){
 			recalculate_sim_time_step();
 			log<LogLevel::Trace>("Calculated sim time step to be {} [s]", dt_s);
 		}
 
-		// Run jobs
+		// Run active jobs
 		for(uint8_t phase = 0; phase < static_cast<uint8_t>(SimPhase::END); ++phase){
 			for(auto& job : active_phases[static_cast<SimPhase>(phase)]){
 				job.run();
