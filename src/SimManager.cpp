@@ -27,6 +27,7 @@ void SimulationManager::recalculate_sim_time_step(){
 	}
 
 	dt_s = 1.0/t_freq;
+	log<LogLevel::Debug>("Setting sim time step to {} [s]", dt_s);
 }
 
 void SimulationManager::register_jobs(std::vector<Job>& js){
@@ -35,8 +36,9 @@ void SimulationManager::register_jobs(std::vector<Job>& js){
 	}
 }
 
-void SimulationManager::activate_deactivate_jobs(double curSimTime_s){
+bool SimulationManager::activate_deactivate_jobs(double curSimTime_s){
 	log<LogLevel::Trace>("Beginning activate/deactivate jobs");
+	bool jobsChanged = false; // latch for whether or not a job was activated/deactivated (i.e. should time step be recalculated)
 
 	for(uint8_t phase = 0; phase < static_cast<uint8_t>(SimPhase::END); ++phase){
 		auto& activeJobs = active_phases[static_cast<SimPhase>(phase)];
@@ -57,6 +59,8 @@ void SimulationManager::activate_deactivate_jobs(double curSimTime_s){
 				job.isActive = false;
 				job.isDeactivated = true;
 				deactivatedJobs.emplace_back(std::move(job));
+
+				jobsChanged = true;
 			}
 		}
 
@@ -64,7 +68,6 @@ void SimulationManager::activate_deactivate_jobs(double curSimTime_s){
 		for(ssize_t i = deactivatedJobs.size() - 1; i > -1; --i){
 			if(deactivatedJobs[i].isActive){
 				deactivatedJobs.erase(deactivatedJobs.begin() + i);
-				recalculate_sim_time_step();
 			}
 		}
 		log<LogLevel::Trace>("Got through deactivation");
@@ -81,6 +84,8 @@ void SimulationManager::activate_deactivate_jobs(double curSimTime_s){
 				job.isActive = true;
 				// Why copy rather than move? Ideally this doesn't happen too often
 				activeJobs.emplace_back(std::move(job));
+
+				jobsChanged = true;
 			}
 		}
 		// Cleanup now defunct active jobs	
@@ -92,15 +97,21 @@ void SimulationManager::activate_deactivate_jobs(double curSimTime_s){
 		}
 		log<LogLevel::Trace>("Got through activation");
 	}
+
+	return jobsChanged;
 }
 
 void SimulationManager::run(){
+	recalculate_sim_time_step();
+
 	double curSimTime_s = 0;
 	while(curSimTime_s < stopTime_s)
 	{
-		activate_deactivate_jobs(curSimTime_s);
-		recalculate_sim_time_step();
-		log<LogLevel::Trace>("Calculated sim time step to be {} [s]", dt_s);
+		bool jobsChanged = activate_deactivate_jobs(curSimTime_s);
+		if(jobsChanged){
+			recalculate_sim_time_step();
+			log<LogLevel::Trace>("Calculated sim time step to be {} [s]", dt_s);
+		}
 
 		// Run jobs
 		for(uint8_t phase = 0; phase < static_cast<uint8_t>(SimPhase::END); ++phase){

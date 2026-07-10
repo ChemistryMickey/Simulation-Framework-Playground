@@ -54,6 +54,10 @@ struct SimulationManager{
 	void register_jobs(std::vector<Job>& js);
         void run();
 	void recalculate_sim_time_step();
-	void activate_deactivate_jobs(double);
+	
+	/// @brief Activate or Deactivate jobs as scheduled
+	/// @returns true if any jobs were activated/deactivated. false otherwise
+	/// This is useful for determining if you need to recalculate the simulation timestamp
+	bool activate_deactivate_jobs(double);
 };
 
