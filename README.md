@@ -1,3 +1,15 @@
+# Simulation Framework Prototyping Playground
+This is just where I'm going to throw ideas down for how to formulate simulation frameworks.
+It shouldn't be taken as enterprise-level code in any respect.
+- Names will likely be inconsistent
+- Doxygen strings won't necessarily be provided
+- Models won't be thoroughly validated
+
+Granted, I'd like to maintain the stricted coding standards over time but this repo will be forked and actually brought up to code as part of my normal work.
+This was just fun to do on a plane while going to a conference.
+
+# TODO
+
 - [x] Get Eigen
 - [x] Get google test
 - [x] Sim controller dynamic time update w/ job on off
