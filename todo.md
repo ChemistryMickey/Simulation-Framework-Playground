@@ -5,6 +5,7 @@
 - [ ] Benchmarking capabilities
 - Steal from Financial Monte Carlo
 	- [ ] Convert to Bazel once you're back on something more powerful than a chomebook
+		- Also, figure out how not to invalidate the cache between config builds. That's annoying
 	- [ ] Convert to GCC > 12 once you're back on something more powerful than a chromebook
 		- Requires fixing the logger
 	- [ ] Timeseries logging via RTTR
