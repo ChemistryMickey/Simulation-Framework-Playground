@@ -14,6 +14,9 @@ build *args: compile_commands
 test *args: compile_commands
     {{ROOT}}/scripts/test.sh {{ROOT}} {{args}}
 
+run *args: compile_commands
+    {{ROOT}}/scripts/run.sh {{args}}
+
 compile_commands:
     #! /usr/bin/bash
     if [[ {{rebuild_compile_commands}} == "true" ]]; then
