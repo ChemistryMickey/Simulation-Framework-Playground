@@ -2,16 +2,16 @@
 BUILD ?= Release
 CXX := g++
 WFLAGS := -Werror -Wall -Wextra -Wpedantic -Wreorder -Wunused-result
-INC := -I include -isystem /usr/include/eigen3 -lfmt
+INC := -I include -isystem /usr/include/eigen3
 
-cxxflags.common := $(WFLAGS) -std=c++20 $(INC) -MMD -MP
+cxxflags.common := $(WFLAGS) -std=c++23 $(INC) -MMD -MP
 cxxflags.Debug := -fsanitize=address,undefined -g -fPIC -fno-omit-frame-pointer
 cxxflags.Release := -O3 -DNDEBUG
 CXXFLAGS = ${cxxflags.${BUILD}} ${cxxflags.common}
 
 ldflags.common := 
 ldflags.Debug := -fsanitize=address,undefined
-ldflags.Release := -flto
+ldflags.Release := -flto=auto
 LDFLAGS = ${ldflags.${BUILD}} ${ldflags.common}
 
 # Define directories
