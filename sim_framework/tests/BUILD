@@ -1,9 +1,9 @@
 load("@rules_cc//cc:cc_test.bzl", "cc_test")
 load("//:common_copts.bzl", "copts", "linkopts")
-load("//tests:generate_tests.bzl", "generate_tests")
+load("//sim_framework/tests:generate_tests.bzl", "generate_tests")
 
 deps = [
-    "//:sim_framework",
+    "//sim_framework",
     "//third_party/rttr_bazel:rttr_core",
     "@cli11//:cli11",
     "@boost.pfr//:boost.pfr",

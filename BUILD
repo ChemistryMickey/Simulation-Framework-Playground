@@ -1,5 +1,4 @@
 load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
-load("@rules_cc//cc:cc_library.bzl", "cc_library")
 load("//:common_copts.bzl", "copts", "linkopts")
 
 config_setting(
@@ -32,24 +31,6 @@ config_setting(
     define_values = {"PROFILE_OPTIMIZED": "true"},
 )
 
-cc_library(
-    name = "sim_framework",
-    srcs = glob([
-        "src/**/*.cpp",
-    ]),
-    hdrs = glob(["include/**/*.hpp"]),
-    copts = copts(),
-    linkopts = linkopts(),
-    linkstatic = True,
-    strip_include_prefix = "include",
-    visibility = ["//visibility:public"],
-    deps = [
-        "//third_party/rttr_bazel:rttr_core",
-        "@eigen",
-        "@magic_enum",
-    ],
-)
-
 cc_binary(
     name = "main",
     srcs = ["main.cpp"],
@@ -57,7 +38,7 @@ cc_binary(
     linkopts = linkopts(),
     linkstatic = True,
     deps = [
-        "//:sim_framework",
+        "sim_framework",
         "@cli11",
     ],
 )
