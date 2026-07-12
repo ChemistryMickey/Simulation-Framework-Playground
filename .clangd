@@ -1,0 +1,7 @@
+CompileFlags:
+  Compiler: /usr/bin/g++
+  CompilationDatabase: .
+  # This is necessary to find omp.h for some reason? gcc headers should come for free I thought
+  Add:
+    - -isystem
+    - /usr/lib/gcc/x86_64-linux-gnu/14/include

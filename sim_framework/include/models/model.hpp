@@ -1,5 +1,6 @@
 #pragma once
-#include "Eigen/Dense"
+#include <cstddef>
+#include <Eigen/Core>
 #include "architecture/constants.hpp"
 #include "architecture/integrator.hpp"
 

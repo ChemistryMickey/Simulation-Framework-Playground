@@ -10,5 +10,6 @@ cc_binary(
     deps = [
         "//sim_framework",
         "@cli11",
+        "@eigen",
     ],
 )

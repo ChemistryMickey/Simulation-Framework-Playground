@@ -23,6 +23,7 @@ compile_commands:
 # Removes all bazel-* directories. Should not really be necessary.
 clean:
     bazel clean
+    rm -f compile_commands.json
 
 # Removes everything including cached remote-fetched files
 nuke:

@@ -2,11 +2,12 @@ def copts():
     copts = [
         # C++ standard
         "-std=c++23",
+
         # Debugging
         "-ggdb3",
 
         # Features
-        "-fopenmp",
+        "-fopenmp",  # This messes up intellisense for some reason. omp.h not found but it's totally there.
 
         # Optimizer and code generation.
         #"-fwrapv",
