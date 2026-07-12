@@ -1,8 +1,8 @@
 #include "Eigen/Dense"
-#include "model.hpp"
-#include "LateRef.hpp"
-#include "integrator.hpp"
-#include "ChargedParticle.hpp"
+#include "models/model.hpp"
+#include "utils/LateRef.hpp"
+#include "architecture/integrator.hpp"
+#include "models/ChargedParticle.hpp"
 
 ChargedParticle::ChargedParticle(Integrator<DATATABLE_COLS>& integrator, Eigen::Vector3d& localMagField_, double charge_C_, double mass_kg_) :
 	Model<3>{integrator},

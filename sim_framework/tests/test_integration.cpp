@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
 #include <vector>
-#include <Eigen/Core>
-#include "model.hpp"
-#include "integrator.hpp"
-#include "SimManager.hpp"
-#include "ChargedParticle.hpp"
+#include "Eigen/Core"
+#include "models/model.hpp"
+#include "architecture/integrator.hpp"
+#include "architecture/SimManager.hpp"
+#include "models/ChargedParticle.hpp"
 
-struct TestSimpleIntegration : ::testing::Test{
+struct TestSimpleIntegration : ::testing::Test {
 	Integrator<6> integrator{};
 	SimulationManager simManager{0.05};
 
@@ -16,14 +16,14 @@ struct TestSimpleIntegration : ::testing::Test{
 	// Sesnors
 	ChargedParticle proton{integrator, extMagField};
 	ChargedParticle electron{integrator, extMagField, 1.6e-19, -9.11e-31};
-	
+
 	// Controllers
-	
+
 	// Actuators
-		
+
 	// Logging
-	
-	void SetUp() override{
+
+	void SetUp() override {
 		// Connect circular dependencies
 		proton.otherParticles.emplace_back(electron);
 		electron.otherParticles.emplace_back(proton);
@@ -31,7 +31,7 @@ struct TestSimpleIntegration : ::testing::Test{
 		// Register integration job
 		std::vector<Job> jobs{
 			{
-				.func = [this](){this->integrator.integrate(1.0/10.0);},
+				.func = [this]() {this->integrator.integrate(1.0 / 10.0);},
 				.frequency = 10,
 				.phase = SimPhase::Integration
 			}
@@ -40,7 +40,7 @@ struct TestSimpleIntegration : ::testing::Test{
 	}
 };
 
-TEST_F(TestSimpleIntegration, SimpleRun){
+TEST_F(TestSimpleIntegration, SimpleRun) {
 	// Setup particle states
 	proton.state(1, 0) = 1;
 	proton.state(0, 0) = 3;

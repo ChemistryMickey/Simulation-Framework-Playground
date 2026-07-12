@@ -1,16 +1,16 @@
 #include <iostream>
 #include <vector>
 #include <cinttypes>
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 #include <unordered_map>
 
-#include "model.hpp"
-#include "integrator.hpp"
-#include "SimManager.hpp"
-#include "constants.hpp"
-#include "ChargedParticle.hpp"
+#include "models/model.hpp"
+#include "architecture/integrator.hpp"
+#include "architecture/SimManager.hpp"
+#include "architecture/constants.hpp"
+#include "models/ChargedParticle.hpp"
 
-int main(){
+int main() {
 	// Simulation plumbing
 	Integrator<DATATABLE_COLS> integrator{};
 	SimulationManager simManager{0.05};
@@ -34,12 +34,12 @@ int main(){
 	// Register things with the Simulation Manager
 	std::vector<Job> jobs{
 		{
-			.func = [&integrator](){std::cout << integrator.dataTable << std::endl;}, 
+			.func = [&integrator]() {std::cout << integrator.dataTable << std::endl;},
 			.frequency = 17,
 			.phase = SimPhase::Integration
 		},
 		{
-			.func = [&integrator, &simManager](){integrator.integrate(1.0/10.0);}, 
+			.func = [&integrator, &simManager]() {integrator.integrate(1.0 / 10.0);},
 			.frequency = 10,
 			.phase = SimPhase::Integration
 		}

@@ -1,6 +1,3 @@
-load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
-load("//:common_copts.bzl", "copts", "linkopts")
-
 config_setting(
     name = "unit_testing",
     define_values = {"UNIT_TESTING": "true"},
@@ -29,18 +26,6 @@ config_setting(
 config_setting(
     name = "profile_optimized",
     define_values = {"PROFILE_OPTIMIZED": "true"},
-)
-
-cc_binary(
-    name = "main",
-    srcs = ["main.cpp"],
-    copts = copts(),
-    linkopts = linkopts(),
-    linkstatic = True,
-    deps = [
-        "sim_framework",
-        "@cli11",
-    ],
 )
 
 # Useful aliases

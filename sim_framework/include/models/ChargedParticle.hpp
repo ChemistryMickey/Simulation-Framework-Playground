@@ -1,8 +1,8 @@
 #pragma once
 #include "Eigen/Dense"
-#include "model.hpp"
-#include "LateRef.hpp"
-#include "integrator.hpp"
+#include "models/model.hpp"
+#include "utils/LateRef.hpp"
+#include "architecture/integrator.hpp"
 
 struct ChargedParticle : Model<3> {
         Eigen::Vector3d& localMagField;

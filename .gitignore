@@ -1,1 +1,4 @@
+.vscode
 bazel-*
+external
+compile_commands.json

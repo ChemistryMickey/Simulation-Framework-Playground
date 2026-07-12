@@ -1,10 +1,10 @@
-#include "SimManager.hpp"
+#include "architecture/SimManager.hpp"
 #include <numeric>
 #include <iostream>
 #include <cmath>
 #include <string>
 #include "magic_enum/magic_enum.hpp"
-#include "logging.hpp"
+#include "utils/logging.hpp"
 
 void SimulationManager::register_job(Job& j) {
 	if (j.activation_time_ns != 0) {

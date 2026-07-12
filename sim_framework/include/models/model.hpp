@@ -1,7 +1,7 @@
 #pragma once
 #include "Eigen/Dense"
-#include "constants.hpp"
-#include "integrator.hpp"
+#include "architecture/constants.hpp"
+#include "architecture/integrator.hpp"
 
 template <size_t M>
 struct Model {

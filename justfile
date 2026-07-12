@@ -8,11 +8,17 @@ rebuild_compile_commands := "true"
 default:
     just --list
 
-build *args:
+build *args: compile_commands
     {{ROOT}}/scripts/build.sh {{args}}
 
-test *args:
+test *args: compile_commands
     {{ROOT}}/scripts/test.sh {{ROOT}} {{args}}
+
+compile_commands:
+    #! /usr/bin/bash
+    if [[ {{rebuild_compile_commands}} == "true" ]]; then
+        bazel run compile_commands
+    fi
 
 # Removes all bazel-* directories. Should not really be necessary.
 clean:

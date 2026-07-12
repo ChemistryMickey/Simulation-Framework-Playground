@@ -4,8 +4,8 @@
 #include <functional>
 #include <iostream>
 
-#include "constants.hpp"
-#include "logging.hpp"
+#include "architecture/constants.hpp"
+#include "utils/logging.hpp"
 #include "magic_enum/magic_enum.hpp"
 
 enum class IntegrationMethod {
