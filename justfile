@@ -11,6 +11,9 @@ default:
 build *args:
     {{ROOT}}/scripts/build.sh {{args}}
 
+test *args:
+    {{ROOT}}/scripts/test.sh {{ROOT}} {{args}}
+
 # Removes all bazel-* directories. Should not really be necessary.
 clean:
     bazel clean

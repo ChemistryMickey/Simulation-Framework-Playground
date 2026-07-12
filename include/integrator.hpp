@@ -45,7 +45,7 @@ struct Integrator {
 
 	void integrate(double dt) {
 		// Just euler here for simplicity and to have mercy on my chromebook
-// But this would be configurable
+		// But this would be configurable
 
 		switch (integrationMethod) {
 		case IntegrationMethod::Euler:
@@ -55,6 +55,12 @@ struct Integrator {
 			dataTable.row(0) += dataTable.row(1) * dt;
 			dataTable.row(1) += dataTable.row(2) * dt;
 			break;
+		case IntegrationMethod::RK4:
+			throw std::runtime_error("Integration method not implemented");
+		case IntegrationMethod::RK45:
+			throw std::runtime_error("Integration method not implemented");
+		case IntegrationMethod::PositionVerlet:
+			throw std::runtime_error("Integration method not implemented");
 		default:
 			throw std::runtime_error("Integration method not implemented");
 		}
