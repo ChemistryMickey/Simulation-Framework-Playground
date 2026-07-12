@@ -1,0 +1,15 @@
+# Enable Bzlmod for every Bazel command
+common --enable_bzlmod
+
+build:unit_testing --test_output=all
+# build:unit_testing --test_output=summary
+build:unit_testing --define=UNIT_TESTING=true
+
+build:benchmarking --define=BENCHMARKING=true
+
+build:optimized --define=OPTIMIZED=true
+
+build:debug --define=DEBUG=true
+
+build:profile --define=PROFILE=true
+build:profile-optimized --define=PROFILE_OPTIMIZED=true
