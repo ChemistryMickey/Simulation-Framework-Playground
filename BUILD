@@ -36,10 +36,9 @@ cc_library(
     name = "sim_framework",
     srcs = glob([
         "src/**/*.cpp",
-        "include/**/*.hpp",
     ]),
+    hdrs = glob(["include/**/*.hpp"]),
     copts = copts(),
-    includes = ["include"],
     linkopts = linkopts(),
     linkstatic = True,
     strip_include_prefix = "include",

@@ -1,11 +1,10 @@
 #pragma once
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 #include "model.hpp"
 #include "LateRef.hpp"
 #include "integrator.hpp"
 
-struct ChargedParticle : Model<3>
-{
+struct ChargedParticle : Model<3> {
         Eigen::Vector3d& localMagField;
         double charge_C;
         double mass_kg;
@@ -18,7 +17,7 @@ struct ChargedParticle : Model<3>
         ChargedParticle(Integrator<DATATABLE_COLS>& integrator, Eigen::Vector3d& localMagField_, double charge_C_ = 1.6e-19, double mass_kg_ = 1.67e-27);
 
         Eigen::Vector3d magfield_at_point(const Eigen::Vector3d& pos);
-	Eigen::Vector3d elecfield_at_point(const Eigen::Vector3d& pos);
+        Eigen::Vector3d elecfield_at_point(const Eigen::Vector3d& pos);
         void derivative() override;
 };
 

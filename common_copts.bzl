@@ -4,7 +4,15 @@ def copts():
         "-std=c++23",
         # Debugging
         "-ggdb3",
-        # Compiler warnings
+
+        # Features
+        "-fopenmp",
+
+        # Optimizer and code generation.
+        #"-fwrapv",
+    ]
+
+    compiler_warnings = [
         "-Werror",
         "-Wall",
         "-Wpedantic",
@@ -15,16 +23,28 @@ def copts():
         "-Wconversion",
         "-Wreorder",
         "-Wformat=2",
-
-        # Features
-        "-fopenmp",
-
-        # Optimizer and code generation.
-        #"-fwrapv",
-
-        # Csv support
-        "-Wno-stringop-truncation",
     ]
+
+    copts += compiler_warnings
+
+    warnings_to_disable = select(
+        {
+            "//:unit_testing": [
+            ],
+            "//:benchmarking": [
+                "-Wno-null-dereference",  # Because of Eigen
+            ],
+            "//:optimized": [
+                "-Wno-null-dereference",  # Because of Eigen
+            ],
+            "//:profile": [
+            ],
+            "//:profile_optimized": [
+                "-Wno-null-dereference",  # Because of Eigen
+            ],
+            "//conditions:default": [],
+        },
+    )
 
     copts += select({
         "//:unit_testing": [
@@ -37,10 +57,12 @@ def copts():
             "-O3",
             "-DBENCHMARKING",
             "-DOPTIMIZE",
+            "-Wno-null-dereference",  # Because of Eigen
         ],
         "//:optimized": [
             "-O3",
             "-DOPTIMIZE",
+            "-Wno-null-dereference",  # Because of Eigen
         ],
         "//:profile": [
             "-fno-omit-frame-pointer",
@@ -51,9 +73,12 @@ def copts():
             "-fno-omit-frame-pointer",
             "-g",
             "-DOPTIMIZE",
+            "-Wno-null-dereference",  # Because of Eigen
         ],
         "//conditions:default": [],
     })
+
+    copts += warnings_to_disable
 
     return copts
 
