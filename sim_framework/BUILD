@@ -16,5 +16,6 @@ cc_library(
         "//third_party/rttr_bazel:rttr_core",
         "@eigen",
         "@magic_enum",
+        "@yaml-cpp",
     ],
 )

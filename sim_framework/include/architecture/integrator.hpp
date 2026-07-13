@@ -1,68 +1,69 @@
 #pragma once
+#include "yaml-cpp/yaml.h"
 #include <Eigen/Dense>
-#include <vector>
 #include <functional>
-#include <iostream>
+#include <vector>
 
-#include "architecture/constants.hpp"
-#include "utils/logging.hpp"
 #include "magic_enum/magic_enum.hpp"
+#include "utils/logging.hpp"
 
-enum class IntegrationMethod {
-	Euler,
-	RK4,
-	RK45,
-	PositionVerlet
-};
-
-// TODO: Transfer this to a YAML and have the integrator take in a YAML node.
-static constexpr IntegrationMethod integrationMethod = IntegrationMethod::Euler;
+enum class IntegrationMethod { Euler, RK4, RK45, PositionVerlet };
 
 // Needs forward declaration. Can't just include model.hpp
-template <size_t M>
-struct Model;
+template <size_t M> struct Model;
 
-template <size_t N>
-struct Integrator {
-	Eigen::Matrix<double, 3, N> dataTable{};
-	size_t curHead = 0;
-	std::vector<std::function<void(void)>> derivatives{};
+struct IntegratorConfig {
+  IntegrationMethod integrationMethod;
+};
+template <size_t N> struct Integrator {
+  Eigen::Matrix<double, 3, N> dataTable{};
+  size_t curHead = 0;
+  std::vector<std::function<void(void)>> derivatives{};
+  IntegratorConfig config;
 
-	Integrator() {
-		log<LogLevel::Debug>("Using {} integration method", magic_enum::enum_name<IntegrationMethod>(integrationMethod));
-	}
+  Integrator(const YAML::Node &node) {
+    config.integrationMethod =
+        magic_enum::enum_cast<IntegrationMethod>(
+            node["simulation"]["integration"]["method"].as<std::string>())
+            .value();
 
-	template <size_t M>
-	Eigen::Map<Eigen::Matrix<double, 3, M>> register_model(Model<M>& model) {
-		auto mapOut = Eigen::Map<Eigen::Matrix<double, 3, M>>(dataTable.data() + 3 * curHead, 3, M);
+    log<LogLevel::Debug>(
+        "Using {} integration method",
+        magic_enum::enum_name<IntegrationMethod>(config.integrationMethod));
+  }
 
-		derivatives.push_back([&model]() {model.derivative();});
+  template <size_t M>
+  Eigen::Map<Eigen::Matrix<double, 3, M>> register_model(Model<M> &model) {
+    auto mapOut = Eigen::Map<Eigen::Matrix<double, 3, M>>(
+        dataTable.data() + 3 * curHead, 3, M);
 
-		curHead += M;
+    derivatives.push_back([&model]() { model.derivative(); });
 
-		return mapOut;
-	}
+    curHead += M;
 
-	void integrate(double dt) {
-		// Just euler here for simplicity and to have mercy on my chromebook
-		// But this would be configurable
+    return mapOut;
+  }
 
-		switch (integrationMethod) {
-		case IntegrationMethod::Euler:
-			for (auto& d : this->derivatives) {
-				d();
-			}
-			dataTable.row(0) += dataTable.row(1) * dt;
-			dataTable.row(1) += dataTable.row(2) * dt;
-			break;
-		case IntegrationMethod::RK4:
-			throw std::runtime_error("Integration method not implemented");
-		case IntegrationMethod::RK45:
-			throw std::runtime_error("Integration method not implemented");
-		case IntegrationMethod::PositionVerlet:
-			throw std::runtime_error("Integration method not implemented");
-		default:
-			throw std::runtime_error("Integration method not implemented");
-		}
-	}
+  void integrate(double dt) {
+    // Just euler here for simplicity and to have mercy on my chromebook
+    // But this would be configurable
+
+    switch (config.integrationMethod) {
+    case IntegrationMethod::Euler:
+      for (auto &d : this->derivatives) {
+        d();
+      }
+      dataTable.row(0) += dataTable.row(1) * dt;
+      dataTable.row(1) += dataTable.row(2) * dt;
+      break;
+    case IntegrationMethod::RK4:
+      throw std::runtime_error("Integration method not implemented");
+    case IntegrationMethod::RK45:
+      throw std::runtime_error("Integration method not implemented");
+    case IntegrationMethod::PositionVerlet:
+      throw std::runtime_error("Integration method not implemented");
+    default:
+      throw std::runtime_error("Integration method not implemented");
+    }
+  }
 };

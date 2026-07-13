@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 
 // Simulation-specific
 static constexpr size_t DATATABLE_COLS = 6;
